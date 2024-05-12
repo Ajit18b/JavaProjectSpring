@@ -1,0 +1,90 @@
+package com.crud.CRUD.Controller;
+
+import com.crud.CRUD.Rpository.UserRepository;
+import com.crud.CRUD.models.UserDetails;
+import com.crud.CRUD.models.Users;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/users")
+public class UserController {
+    @Autowired
+    private UserRepository repo;
+    @GetMapping({"","/"})
+    public String UserList (Model model){
+       List<Users> user = repo.findAll();
+       model.addAttribute("users",user);
+       return "users/index";
+    }
+    @GetMapping("/create")
+    public String showCreatePage(Model model){
+        UserDetails userDetails=new UserDetails();
+        model.addAttribute("userDetails",userDetails);
+        return "users/CreateUser";
+    }
+    @PostMapping("/create")
+    public String createUser(
+            @Valid @ModelAttribute UserDetails userDetails,
+            BindingResult result
+    )
+    {
+        Users user = new Users();
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        user.setPhone(userDetails.getPhone());
+        repo.save(user);
+        return "redirect:/users";
+    }
+    @GetMapping("/edit")
+    public String showEditForm(@RequestParam int id, Model model) {
+        try {
+            Users user = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
+            model.addAttribute("user", user);
+            UserDetails userDetails = new UserDetails();
+            userDetails.setName(user.getName());
+            userDetails.setEmail(user.getEmail());
+            userDetails.setPhone(user.getPhone());
+            model.addAttribute("userDetails", userDetails);
+        } catch (EntityNotFoundException ex) {
+            System.out.println("Exception: " + ex.getMessage());
+            return "redirect:/users";
+        }
+        return "users/EditUser";
+    }
+
+    @PostMapping("/edit")
+    public String updateUser(Model model,@RequestParam int id,@Valid @ModelAttribute UserDetails userDetails,
+                             BindingResult result) {
+        try {
+            Users user = repo.findById(id).get();
+            model.addAttribute("user",user);
+            if(result.hasErrors()){
+                return "users/EditUser";
+            }
+            user.setName(userDetails.getName());
+            user.setEmail(userDetails.getEmail());
+            user.setPhone(userDetails.getPhone());
+            repo.save(user);
+        }
+        catch (Exception ex){
+            System.out.println("Exception: "+ex.getMessage());
+        }
+        return "redirect:/users";
+    }
+    @GetMapping("/delete")
+        public String deleteProduct(
+                @RequestParam int id
+        ) {
+        Users user= repo.findById(id).get();
+        repo.delete(user);
+        return "redirect:/users";
+    }
+}
