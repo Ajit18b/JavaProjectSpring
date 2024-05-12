@@ -1,6 +1,6 @@
 package com.crud.CRUD.Controller;
 
-import com.crud.CRUD.Rpository.UserRepository;
+import com.crud.CRUD.Repository.UserRepository;
 import com.crud.CRUD.models.UserDetails;
 import com.crud.CRUD.models.Users;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,19 +30,34 @@ public class UserController {
         model.addAttribute("userDetails",userDetails);
         return "users/CreateUser";
     }
+
     @PostMapping("/create")
     public String createUser(
             @Valid @ModelAttribute UserDetails userDetails,
-            BindingResult result
-    )
-    {
+            BindingResult result,
+            Model model
+    ) {
+        // Check if the user already exists in the database
+
+        Users existingEmail = repo.findByEmail(userDetails.getEmail());
+        if (existingEmail != null) {
+            result.rejectValue("email", "error.userDetails", "User with this email already exists");
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("userDetails", userDetails);
+            return "users/CreateUser";
+        }
+
+        // Save userDetails to the database
         Users user = new Users();
         user.setName(userDetails.getName());
         user.setEmail(userDetails.getEmail());
         user.setPhone(userDetails.getPhone());
         repo.save(user);
+
         return "redirect:/users";
     }
+
     @GetMapping("/edit")
     public String showEditForm(@RequestParam int id, Model model) {
         try {
