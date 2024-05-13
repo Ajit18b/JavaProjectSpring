@@ -80,11 +80,15 @@ public class UserController {
     @PostMapping("/edit")
     public String updateUser(Model model,@RequestParam int id,@Valid @ModelAttribute UserDetails userDetails,
                              BindingResult result) {
-        Users existingEmail = repo.findByEmail(userDetails.getEmail());
-
+        Users existingEmailUser = repo.findByEmail(userDetails.getEmail());
+        Users existingPhoneNumaer = repo.findByPhone(userDetails.getPhone());
+        Users currentUser = repo.findById(id).orElse(null);
         try {
-            if (existingEmail != null) {
+            if (existingEmailUser != null && !existingEmailUser.equals(currentUser)) {
                 result.rejectValue("email", "error.userDetails", "User with this email already exists");
+            }
+            if(existingPhoneNumaer !=null && !existingPhoneNumaer.equals(currentUser)){
+                result.rejectValue("phone","error.userDetails","Phone number already exists");
             }
             Users user = repo.findById(id).get();
             model.addAttribute("user",user);

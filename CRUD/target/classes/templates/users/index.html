@@ -8,6 +8,8 @@
     <style>
         body {
             background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
         }
         .btn-group {
             margin-bottom: 20px;
@@ -17,6 +19,9 @@
         }
     </style>
 </head>
+<header class="text-center bg-primary text-white p-3">
+    <h1>User Management System</h1>
+</header>
 <body>
 <div class="container">
     <h1 class="text-center my-4">User Details</h1>
@@ -35,7 +40,6 @@
         </tr>
         </thead>
         <tbody>
-        <!-- You can iterate over your list of users using Thymeleaf -->
         <tr th:each="us : ${users}">
             <td th:text="${us.id}"></td>
             <td th:text="${us.name}"></td>

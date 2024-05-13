@@ -18,7 +18,6 @@ public class Users {
 
     @NotEmpty(message = "Email is required")
     @Email(message = "Email must be a valid email address")
-    @NotEmpty(message = "Email is required")
     @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
 
