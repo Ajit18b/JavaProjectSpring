@@ -1,8 +1,8 @@
 package com.crud.CRUD.Controller;
 
 import com.crud.CRUD.Repository.UserRepository;
-import com.crud.CRUD.models.UserDetails;
-import com.crud.CRUD.models.Users;
+import com.crud.CRUD.Service.UserDetails;
+import com.crud.CRUD.Entity.Users;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +52,7 @@ public class UserController {
         Users user = new Users();
         user.setName(userDetails.getName());
         user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
         user.setPhone(userDetails.getPhone());
         repo.save(user);
 
@@ -66,6 +67,7 @@ public class UserController {
             UserDetails userDetails = new UserDetails();
             userDetails.setName(user.getName());
             userDetails.setEmail(user.getEmail());
+            userDetails.setPassword(user.getPassword());
             userDetails.setPhone(user.getPhone());
             model.addAttribute("userDetails", userDetails);
         } catch (EntityNotFoundException ex) {
@@ -78,7 +80,12 @@ public class UserController {
     @PostMapping("/edit")
     public String updateUser(Model model,@RequestParam int id,@Valid @ModelAttribute UserDetails userDetails,
                              BindingResult result) {
+        Users existingEmail = repo.findByEmail(userDetails.getEmail());
+
         try {
+            if (existingEmail != null) {
+                result.rejectValue("email", "error.userDetails", "User with this email already exists");
+            }
             Users user = repo.findById(id).get();
             model.addAttribute("user",user);
             if(result.hasErrors()){
@@ -86,6 +93,7 @@ public class UserController {
             }
             user.setName(userDetails.getName());
             user.setEmail(userDetails.getEmail());
+            user.setPassword(userDetails.getPassword());
             user.setPhone(userDetails.getPhone());
             repo.save(user);
         }
