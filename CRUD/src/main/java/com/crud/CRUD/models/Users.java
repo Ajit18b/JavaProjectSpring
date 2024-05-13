@@ -22,6 +22,10 @@ public class Users {
     @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
 
+    @NotEmpty(message = "Password is required")
+    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
+    private String password;
+
     @NotEmpty(message = "Phone number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be a 10-digit number")
     @Size(max = 10, message = "Phone number must not exceed 10 characters")
