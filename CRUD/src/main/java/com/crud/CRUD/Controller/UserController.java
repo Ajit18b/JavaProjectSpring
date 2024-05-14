@@ -42,11 +42,11 @@ public class UserController {
         // Check if the user already exists in the database
 
         Users existingEmail = repo.findByEmail(userDetails.getEmail());
-        Users existingPhoneNumaer = repo.findByPhone(userDetails.getPhone());
+        Users existingPhoneNumber = repo.findByPhone(userDetails.getPhone());
         if (existingEmail != null) {
             result.rejectValue("email", "error.userDetails", "User with this email already exists");
         }
-        if (existingPhoneNumaer != null) {
+        if (existingPhoneNumber != null) {
             result.rejectValue("phone", "error.userDetails", "Phone number already exists");
         }
         if (result.hasErrors()) {
@@ -61,8 +61,11 @@ public class UserController {
         user.setPassword(userDetails.getPassword());
         user.setPhone(userDetails.getPhone());
         repo.save(user);
+        model.addAttribute("successMessage", "User added successfully!");
+        model.addAttribute("userDetails", new UserDetails());
+        return "users/CreateUser";
 
-        return "redirect:/users";
+        //return "redirect:/users";
     }
 
     @GetMapping("/edit")
@@ -109,8 +112,10 @@ public class UserController {
         } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
         }
-        // model.addAttribute("successMessage", "User updated successfully!"); // Add success message to the model
-        return "redirect:/users";
+        model.addAttribute("successMessage", "User updated successfully!");
+        model.addAttribute("userDetails", new UserDetails());
+        return "users/EditUser";
+        //return "redirect:/users";
     }
 
     @GetMapping("/delete")

@@ -55,8 +55,15 @@
                     </div>
 
                     <div class="container text-center my-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-smaller">Create User</button>
-                        <a class="btn btn-danger btn-block btn-smaller" href="/users">Cancel</a>
+                        <button type="submit" class="btn btn-primary btn-block btn-smaller">Create User
+                        </button>
+                        <a th:if="${successMessage == null}" class="btn btn-danger btn-block btn-smaller" href="/users">Cancel</a>
+                    </div>
+                    <div class="container text-center my-4">
+                        <span th:if="${successMessage != null}" class="text-success">[[${successMessage}]]</span>
+                    </div>
+                    <div class="container text-center my-4">
+                        <a th:if="${successMessage != null}" class="btn btn-primary btn-block btn-smaller" href="/users">Go back to User Page</a>
                     </div>
                 </form>
             </div>

@@ -31,11 +31,12 @@
         <div class="col-md-6">
             <div class="card p-4">
                 <h1 class="text-center mb-4">Edit User</h1>
+                <!-- language: html -->
                 <form method="post" enctype="multipart/form-data" th:object="${userDetails}">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">ID</label>
-                        <input readonly class="form-control" th:value="${user.id}">
-                    </div>
+                    <h5><div class="mb-3 form-control--readonly">
+                        <label for="name" class="form-label">USER ID :</label>
+                        <span th:text="${user.id}"></span>
+                    </div></h5>
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" th:field="*{name}">
@@ -58,14 +59,16 @@
                         <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger"></span>
                     </div>
                     <div class="container text-center my-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-smaller"
-                                onclick="return confirm('User Updated successfully Go back to index page ')">Update User
+                        <button type="submit" class="btn btn-primary btn-block btn-smaller">Update User
                         </button>
-                        <a class="btn btn-danger btn-block btn-smaller" href="/users">Cancel</a>
+                        <a th:if="${successMessage == null}" class="btn btn-danger btn-block btn-smaller" href="/users">Cancel</a>
                     </div>
-                    <!--                    <div th:if="${successMessage}" class="alert alert-success" role="alert">
-                                            <p th:text="${successMessage}"></p>
-                                        </div>-->
+                    <div class="container text-center my-4">
+                        <span th:if="${successMessage != null}" class="text-success">[[${successMessage}]]</span>
+                    </div>
+                    <div class="container text-center my-4">
+                        <a th:if="${successMessage != null}" class="btn btn-primary btn-block btn-smaller" href="/users">Go back to User Page</a>
+                    </div>
                 </form>
             </div>
         </div>
